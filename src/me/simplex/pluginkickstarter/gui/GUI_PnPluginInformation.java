@@ -53,15 +53,19 @@ public class GUI_PnPluginInformation extends JPanel {
 	private JPanel pnInventoryEvents;
 	private JPanel pnVehicleEvents;
 	private JPanel pnServerEvents;
+	private JPanel pnPaintingEvents;
+	private JPanel pnEnchantmentEvents;
 	
 	private EventTable tblBlockEvents;
 	private EventTable tblEntityEvents;
 	private EventTable tblInventoryEvents;
 	private EventTable tblPlayerEvents;
+	private EventTable tblPaintingEvents;
 	private EventTable tblServerEvents;
 	private EventTable tblVehicleEvents;
 	private EventTable tblWeatherEvents;
 	private EventTable tblWorldEvents;
+	private EventTable tblEnchantmentEvents;
 	
 	private JScrollPane spBlock;
 	private JScrollPane spPlayer;
@@ -71,6 +75,8 @@ public class GUI_PnPluginInformation extends JPanel {
 	private JScrollPane spInventory;
 	private JScrollPane spVehicle;
 	private JScrollPane spServer;
+	private JScrollPane spPainting;
+	private JScrollPane spEnchantment;
 	
 	private JLabel lblSelectTheEvents;
 	private JPanel pnTasks;
@@ -202,7 +208,9 @@ public class GUI_PnPluginInformation extends JPanel {
 			tpEvents.addTab("Block events", null, getPnBlockEvents(), null);
 			tpEvents.addTab("Entity events", null, getPnEntityEvents(), null);
 			tpEvents.addTab("Inventory events", null, getPnInventoryEvents(), null);
+			tpEvents.addTab("Enchantment events", null, getPnEnchantmentEvents(), null);
 			tpEvents.addTab("Player events", null, getPnPlayerEvents(), null);
+			tpEvents.addTab("Painting events", null, getPnPaintingEvents(), null);
 			tpEvents.addTab("Vehicle events", null, getPnVehicleEvents(), null);
 			tpEvents.addTab("Server events", null, getPnServerEvents(), null);
 			tpEvents.addTab("Weather events", null, getPnWeatherEvents(), null);
@@ -219,6 +227,25 @@ public class GUI_PnPluginInformation extends JPanel {
 		}
 		return pnPlayerEvents;
 	}
+	
+	private JPanel getPnEnchantmentEvents(){
+		if(pnEnchantmentEvents == null){
+			pnEnchantmentEvents = new JPanel();
+			pnEnchantmentEvents.setLayout(new BorderLayout(0, 0));
+			pnEnchantmentEvents.add(getSpEnchantment(), BorderLayout.CENTER);
+		}
+		return pnEnchantmentEvents;
+	}
+	
+	private JPanel getPnPaintingEvents() {
+		if (pnPaintingEvents == null) {
+			pnPaintingEvents = new JPanel();
+			pnPaintingEvents.setLayout(new BorderLayout(0, 0));
+			pnPaintingEvents.add(getSpPainting(), BorderLayout.CENTER);
+		}
+		return pnPaintingEvents;
+	}
+	
 	private JPanel getPnBlockEvents() {
 		if (pnBlockEvents == null) {
 			pnBlockEvents = new JPanel();
@@ -273,6 +300,13 @@ public class GUI_PnPluginInformation extends JPanel {
 		return tblEntityEvents;
 	}
 	
+	private EventTable getTblPaintingEvents() {
+		if (tblPaintingEvents == null) {
+			tblPaintingEvents = new EventTable(ListenerType.Painting, GUI);
+		}
+		return tblPaintingEvents;
+	}
+	
 	private EventTable getTblInventoryEvents() {
 		if (tblInventoryEvents == null) {
 			tblInventoryEvents = new EventTable(ListenerType.Inventory, GUI);
@@ -315,6 +349,13 @@ public class GUI_PnPluginInformation extends JPanel {
 		return tblPlayerEvents;
 	}
 	
+	private EventTable getTblEnchantmentEvents(){
+		if(tblEnchantmentEvents == null){
+			tblEnchantmentEvents = new EventTable(ListenerType.Enchantment, GUI);
+		}
+		return tblEnchantmentEvents;
+	}
+	
 	private JScrollPane getSpBlock() {
 		if (spBlock == null) {
 			spBlock = new JScrollPane();
@@ -344,6 +385,20 @@ public class GUI_PnPluginInformation extends JPanel {
 			spPlayer.setViewportView(getTblPlayerEvents());
 		}
 		return spPlayer;
+	}
+	private JScrollPane getSpEnchantment(){
+		if(spEnchantment == null){
+			spEnchantment = new JScrollPane();
+			spEnchantment.setViewportView(getTblEnchantmentEvents());
+		}
+		return spEnchantment;
+	}
+	private JScrollPane getSpPainting() {
+		if (spPainting == null) {
+			spPainting = new JScrollPane();
+			spPainting.setViewportView(getTblPaintingEvents());
+		}
+		return spPainting;
 	}
 	private JScrollPane getSpEntity() {
 		if (spEntity == null) {

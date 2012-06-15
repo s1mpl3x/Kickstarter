@@ -1,0 +1,21 @@
+$package
+
+import java.util.ArrayList;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public interface PermissionPlugin {
+	
+	public boolean isActive();
+	
+	public boolean getPermissions(CommandSender sender, String permissionNode);
+	
+	public ArrayList<String> getGroups();
+	
+	public String getGroupOfPlayer(Player player);
+	
+	public void init();
+	
+	public String getName();
+}

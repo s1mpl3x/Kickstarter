@@ -17,8 +17,6 @@ $variables
 	public void onEnable(){
 $init
 		
-$register_events
-		
 $register_commands
 		
 $schedule_tasks
@@ -29,6 +27,8 @@ $schedule_tasks
 $disable
 	}
 $logger
+
+$register_events
 
 $setupConfig
 	

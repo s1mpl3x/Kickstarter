@@ -39,6 +39,9 @@ public abstract class Generator {
 		else if(template.equals(TemplateType.Listener)){
 			ret = main.getData().getPackage()+".listeners";
 		}
+		else if(template.equals(TemplateType.Configuration)){
+			ret = main.getData().getPackage() + ".configuration";
+		}
 		else {
 			ret = main.getData().getPackage();
 		}

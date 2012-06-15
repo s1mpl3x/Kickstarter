@@ -8,7 +8,6 @@ public class ConfigurationNodeContainer {
 	private ConfigNodeDataType type;
 	
 	public ConfigurationNodeContainer() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getNode() {

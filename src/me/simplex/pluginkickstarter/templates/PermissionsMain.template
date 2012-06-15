@@ -1,0 +1,73 @@
+/*
+ * $pluginname - by $author
+ * $website
+ *
+ * powered by Kickstarter
+ */
+
+package $package
+
+import java.util.ArrayList;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+$mainclassimport
+$permsImport
+
+public class PermissionManager{
+
+	private $mainclasstype permPlugin;
+	private EnderdragonsPlus plugin;
+	
+	
+	public PermissionManager(){
+		plugin = $mainclasstype.getPlugin();
+		checkForPermissionsPlugin();
+	}
+	
+	private void checkForPermissionsPlugin(){
+		PermissionPlugin tempPlugin;
+
+		$permissionbuild
+	}
+
+	
+	/**
+	 * The Check of Permissions on the inited Permission-System
+	 * 
+	 * @param player the Player to check
+	 * @param permissionNode the String to check
+	 * @return if the Player has Permissions
+	 */
+	private boolean checkPermissionsIntern(CommandSender sender, String permissionNode){
+		if(sender == null) return false;
+		return permPlugin.getPermissions(sender, permissionNode);
+	}
+	
+	public boolean checkPermissions(CommandSender sender, String permissionNode){
+		boolean perm = checkPermissionsIntern(sender, permissionNode);
+		if(!perm)
+			sender.sendMessage(ChatColor.RED + "You don't have Permissions!");
+		
+		return perm;
+	}
+	
+	public boolean checkPermissionsSilent(CommandSender sender, String permissionNode){
+		return checkPermissionsIntern(sender, permissionNode);
+	}
+	
+	public ArrayList<String> getAllGroups(){
+		return permPlugin.getGroups();
+	}
+	
+	public String getGroupOfPlayer(Player player){
+		return permPlugin.getGroupOfPlayer(player);
+	}
+	
+	public String getPermissionsName(){
+		return permPlugin.getName();
+	}
+	
+}

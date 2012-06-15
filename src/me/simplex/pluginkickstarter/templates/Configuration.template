@@ -1,0 +1,34 @@
+/*
+ * $pluginname - by $author
+ * $website
+ *
+ * powered by Kickstarter
+ */
+ 
+ package $package
+ 
+ import org.bukkit.configuration.file.FileConfiguration;
+ $mainclassimport
+ 
+ public class $classname{
+	private $mainclasstype plugin;
+
+$config_vars
+
+	public $classname($mainclasstype plugin){
+		this.plugin = plugin;
+		setupConfiguration();
+		reloadConfiguration();
+	}
+
+	private void setupConfiguration(){
+$config_default
+	}
+	
+	
+	private void reloadConfiguration(){
+$config_reload
+	}
+	
+	$config_getter
+}

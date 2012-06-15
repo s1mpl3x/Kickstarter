@@ -23,14 +23,14 @@ public class GenPlugin extends Generator {
 	
 	public String buildDepends(){
 		if (main.getData().getDepends().trim().length() > 0) {
-			return "depends: "+main.getData().getDepends().trim();
+			return "depends: ["+main.getData().getDepends().trim() + "]";
 		}
 		return "";
 	}
 	
 	public String buildSoftdepends(){
 		if (main.getData().getSoftdepends().trim().length() > 0) {
-			return "softdepends: "+main.getData().getSoftdepends().trim();
+			return "softdepends: ["+main.getData().getSoftdepends().trim() + "]";
 		}
 		return "";
 	}

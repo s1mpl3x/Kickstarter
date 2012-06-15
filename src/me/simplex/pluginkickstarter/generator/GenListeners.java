@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import me.simplex.pluginkickstarter.PluginKickstarter;
 import me.simplex.pluginkickstarter.storage.ListenerContainer;
 import me.simplex.pluginkickstarter.util.ListenerType;
+import me.simplex.pluginkickstarter.util.PriorityType;
 
 public class GenListeners extends Generator {
 	private ListenerType type;
@@ -30,16 +31,7 @@ public class GenListeners extends Generator {
 	public String buildImports() {
 		String ret = "";
 			for (ListenerContainer c : listeners) {
-				if (c.getName().startsWith("onPaintingBreak")) {
-					ret=ret+"import org.bukkit.event.painting.PaintingBreakEvent;\n";
-
-				}
-				else if (c.getName().startsWith("onPaintingPlace")) {
-					ret=ret+"import org.bukkit.event.painting.PaintingPlaceEvent;\n";
-				}
-				else {
-					ret=ret+"import org.bukkit.event."+c.getFile().toString().toLowerCase()+"."+c.getEvent()+";\n";
-				}
+				ret=ret+"import org.bukkit.event."+c.getFile().toString().toLowerCase()+"."+c.getEvent()+";\n";
 			}
 		return ret;
 	}
@@ -47,7 +39,7 @@ public class GenListeners extends Generator {
 	public String buildListeners() {
 		String ret = "";
 		for (ListenerContainer c : listeners) {
-			ret=ret+"	@Override\n";
+			ret=ret+"	@EventHandler" + getPriorityString(c) + "\n";
 			ret=ret+"	public void "+c.getName()+"("+c.getEvent()+" event){"+"\n";
 			ret=ret+"		// TODO handle that event\n";
 			ret=ret+"	}\n\n";
@@ -55,8 +47,18 @@ public class GenListeners extends Generator {
 		return ret;
 	}
 	
+	private String getPriorityString(ListenerContainer listener){
+		PriorityType type = listener.getPriority();
+		if(type == PriorityType.Normal) return "";
+		
+		String priorityString = "(priority  = EventPriority.";
+		priorityString += type.name().toUpperCase() + ")";
+				
+		return priorityString;
+	}
+	
 	public String buildListenerImport(){
-		switch (type) {
+		/*switch (type) {
 		case Block: return "import org.bukkit.event.block.BlockListener;\n";
 		case Entity: return "import org.bukkit.event.entity.EntityListener;\n";
 		case Inventory: return "import org.bukkit.event.inventory.InventoryListener;\n";
@@ -65,21 +67,34 @@ public class GenListeners extends Generator {
 		case Vehicle: return "import org.bukkit.event.vehicle.VehicleListener;\n";
 		case Weather: return "import org.bukkit.event.weather.WeatherListener;\n";
 		case World: return "import org.bukkit.event.world.WorldListener;\n";
+		}*/
+		String importString = "import org.bukkit.event.Listener; \n"
+				             + "import org.bukkit.event.EventHandler; \n";
+		
+		for(ListenerContainer listener : listeners){
+			if(listener.getPriority() != PriorityType.Normal){
+				importString += "import org.bukkit.event.EventPriority; \n";
+				break;
+			}
 		}
-		return "";
+		
+		return importString;
+		
+		//return "";
 	}
 
 	public CharSequence buildSuperclass() {
-		switch (type) {
-		case Block: return "BlockListener";
-		case Entity: return "EntityListener";
-		case Inventory: return "InventoryListener";
-		case Player:  return "PlayerListener";
-		case Server: return "ServerListener";
-		case Vehicle: return "VehicleListener";
-		case Weather: return "WeatherListener";
-		case World: return "WorldListener";
+		/*switch (type) {
+		case Block: return "Listener";
+		case Entity: return "Listener";
+		case Inventory: return "Listener";
+		case Player:  return "Listener";
+		case Server: return "Listener";
+		case Vehicle: return "Listener";
+		case Weather: return "Listener";
+		case World: return "Listener";
 		}
-		return "";
+		return "";*/
+		return "Listener";
 	}
 }

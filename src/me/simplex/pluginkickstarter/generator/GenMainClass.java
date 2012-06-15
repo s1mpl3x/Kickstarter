@@ -4,10 +4,8 @@ import java.util.ArrayList;
 
 import me.simplex.pluginkickstarter.PluginKickstarter;
 import me.simplex.pluginkickstarter.storage.CommandContainer;
-import me.simplex.pluginkickstarter.storage.ConfigurationNodeContainer;
 import me.simplex.pluginkickstarter.storage.ListenerContainer;
 import me.simplex.pluginkickstarter.storage.TaskContainer;
-import me.simplex.pluginkickstarter.util.ConfigNodeDataType;
 import me.simplex.pluginkickstarter.util.ListenerType;
 
 public class GenMainClass extends Generator {
@@ -38,25 +36,15 @@ public class GenMainClass extends Generator {
 		ret=ret+"\n";
 		ret=ret+"	private String prefix;\n";
 		// Config
-		if (main.getData().isGen_configuration()) {
-			for (ConfigurationNodeContainer c : main.getData().getConfigNodes()) {
-				switch (c.getType()) {
-					case BOOLEAN: 		ret=ret+"	private boolean "+buildConfigVarName(c)+";\n"; break;
-					case BOOLEAN_LIST: 	ret=ret+"	private ArrayList<Boolean> "+buildConfigVarName(c)+";\n"; break;
-					case DOUBLE: 		ret=ret+"	private double "+buildConfigVarName(c)+";\n"; break;
-					case DOUBLE_LIST: 	ret=ret+"	private ArrayList<Double> "+buildConfigVarName(c)+";\n"; break;
-					case INT: 			ret=ret+"	private int "+buildConfigVarName(c)+";\n"; break;
-					case INT_LIST: 		ret=ret+"	private ArrayList<Integer> "+buildConfigVarName(c)+";\n"; break;
-					case STRING:		ret=ret+"	private String "+buildConfigVarName(c)+";\n"; break;
-					case STRING_LIST:	ret=ret+"	private ArrayList<String> "+buildConfigVarName(c)+";\n"; break;
-				}
-			}
+		if (main.getData().isGen_configuration() && main.getData().getConfigNodes().size() > 0) {
+			ret += "	private Config config;\n";
 		}
 		
-		// Listeners
+		// Listeners 
+		/*
 		for (ListenerType t : types_to_handle) {
 			ret=ret+"	private Listener_"+StringToClassName(t.toString())+" listener"+StringToClassName(t.toString())+";\n";
-		}
+		}*/
 
 		return ret;
 	}
@@ -75,44 +63,34 @@ public class GenMainClass extends Generator {
 		// Config
 		if (main.getData().isGen_configuration() && main.getData().getConfigNodes().size() > 0) {
 			ret=ret+"		setupConfiguration();\n";
-			
-			for (ConfigurationNodeContainer c : main.getData().getConfigNodes()) {
-				switch (c.getType()) {
-					case BOOLEAN_LIST: 
-						ret=ret+"		"+buildConfigVarName(c)+" = new ArrayList<Boolean>();\n";
-						break;
-					case DOUBLE_LIST: 
-						ret=ret+"		"+buildConfigVarName(c)+" = new ArrayList<Double>();\n";
-						break;
-					case INT_LIST:
-						ret=ret+"		"+buildConfigVarName(c)+" = new ArrayList<Integer>();\n";
-						break;
-					case STRING_LIST:
-						ret=ret+"		"+buildConfigVarName(c)+" = new ArrayList<String>();\n";
-						break;
-				}
-			}
 		}
 		
+		if(types_to_handle.size() > 0) ret += "		registerEvents();\n";
+		
 		// Listeners
+		/*
 		for (ListenerType t : types_to_handle) {
-			ret=ret+"		listener"+StringToClassName(t.toString())+" = new Listener_"+StringToClassName(t.toString())+"(this);\n";
-		}
+			ret +="		listener"+StringToClassName(t.toString())+" = new Listener_"+StringToClassName(t.toString())+"(this);\n";
+		} */
 		return ret; 
 	}
 	
 	public String buildRegister_Events(){
-		String ret = "";
-		for (ListenerContainer c : main.getData().getListener()) {
-			ret=ret+"		getServer().getPluginManager().registerEvent("+c.getType()+", listener"+StringToClassName(c.getFile().toString())+", Priority."+c.getPriority().toString()+", this);\n";
+		if(types_to_handle.size() == 0) return "";
+		
+		String ret = "	private void registerEvents(){\n";
+		for (ListenerType t : types_to_handle) {
+			ret +="		new Listener_" + StringToClassName(t.toString()) + "(this);\n";
 		}
+		ret += "	}\n";
+		
 		return ret;
 	}
 	
 	public String buildRegister_Commands(){
 		String commandRegisters = "";
 		for (CommandContainer c : main.getData().getCommands()) {
-			commandRegisters = commandRegisters + "		getCommand(\""+c.getCommand().toLowerCase()+"\").setExecutor(new "+"CommandExecutor_"+StringToClassName(c.getCommand())+"(this));\n";
+			commandRegisters += "		getCommand(\""+c.getCommand().toLowerCase()+"\").setExecutor(new "+"CommandExecutor_"+StringToClassName(c.getCommand())+"(this));\n";
 		}
 		return commandRegisters;
 	}
@@ -142,15 +120,8 @@ public class GenMainClass extends Generator {
 		ret=ret+"import org.bukkit.plugin.PluginDescriptionFile;\n";
 		
 		//Config Imports
-		if (main.getData().isGen_configuration()) {
-			for (ConfigurationNodeContainer c : main.getData().getConfigNodes()) {
-				ConfigNodeDataType t=c.getType();
-				if (t.equals(ConfigNodeDataType.BOOLEAN_LIST) || t.equals(ConfigNodeDataType.DOUBLE_LIST)|| t.equals(ConfigNodeDataType.INT_LIST)|| t.equals(ConfigNodeDataType.STRING_LIST)) {
-					ret=ret+"import java.util.ArrayList;\n";
-					break;
-				}
-			}
-			ret=ret+"import org.bukkit.util.config.Configuration;\n";
+		if (main.getData().isGen_configuration() && main.getData().getConfigNodes().size() > 0) {
+			ret += "import " + main.getData().getPackage() + ".configuration.Config;\n";
 		}
 		//Command Imports
 		for (CommandContainer c : main.getData().getCommands()) {
@@ -165,9 +136,7 @@ public class GenMainClass extends Generator {
 		}
 		
 		//Listener Imports
-		if (types_to_handle.size() > 0) {
-			ret=ret+"import org.bukkit.event.Event.Priority;\n";
-			ret=ret+"import org.bukkit.event.Event.Type;\n";		
+		if (types_to_handle.size() > 0) {	
 			for (ListenerType t : types_to_handle) {
 				ret=ret+"import "+main.getData().getPackage()+".listeners.Listener_"+StringToClassName(t.toString())+";\n";
 			}
@@ -184,77 +153,21 @@ public class GenMainClass extends Generator {
 		String ret="";
 		if (main.getData().isGen_configuration() && main.getData().getConfigNodes().size() > 0) {
 			ret=ret+"	private void setupConfiguration(){\n";
-			ret=ret+"		Configuration cfg = getConfiguration();\n";
-			ret=ret+"		\n";
-			ret=ret+"		cfg.setHeader(\"#"+main.getData().getCfgfileheader()+"\");\n";
-			ret=ret+"		\n";
-			for (ConfigurationNodeContainer c : main.getData().getConfigNodes()) {
-				ret=ret+buildCfgGetString(c);
-			}
-			ret=ret+"		\n";
-			ret=ret+"		cfg.save();\n";
+			ret=ret+"		config = new Config(this);\n";
 			ret=ret+"	}\n";
 		}
 
 		return ret;
 	}
-	
-	private String buildCfgGetString(ConfigurationNodeContainer c){
-		switch (c.getType()) {
-			case BOOLEAN: return "		"+buildConfigVarName(c)+" = cfg.getBoolean(\""+c.getNode()+"\", "+c.getDefaultValue()+");\n";
-			case BOOLEAN_LIST: return buildListInit(c);
-			case DOUBLE: return "		"+buildConfigVarName(c)+" = cfg.getDouble(\""+c.getNode()+"\", "+c.getDefaultValue()+");\n";
-			case DOUBLE_LIST: return buildListInit(c);
-			case INT: return "		"+buildConfigVarName(c)+" = cfg.getInt(\""+c.getNode()+"\", "+c.getDefaultValue()+");\n";
-			case INT_LIST: return buildListInit(c);
-			case STRING: return "		"+buildConfigVarName(c)+" = cfg.getString(\""+c.getNode()+"\", \""+c.getDefaultValue()+"\");\n";
-			case STRING_LIST: return buildListInit(c);
-		}
-		return "";
-	}
-	
-	private String buildConfigVarName(ConfigurationNodeContainer c){
-		return "config_"+c.getNode().replace(".", "_").toLowerCase(); 
-	}
-	
-	private String buildListInit(ConfigurationNodeContainer c){
-		String ret ="";
-		switch (c.getType()) {
-		case BOOLEAN_LIST:
-			ret=ret+ "		ArrayList<Boolean> init_"+c.getNode().replace(".", "_")+" = new ArrayList<Boolean>();\n";
-			for (String listinit : c.getDefaultValue().split(",")) {
-				ret=ret+"		init_"+c.getNode().replace(".", "_")+".add("+listinit.trim()+");\n";
-			}
-			ret=ret+"		"+buildConfigVarName(c)+".addAll(cfg.getBooleanList(\""+c.getNode()+"\", init_"+c.getNode().replace(".", "_")+"));\n";
-			break;
-		case DOUBLE_LIST: 	
-			ret=ret+ "		ArrayList<Double> init_"+c.getNode().replace(".", "_")+" =new ArrayList<Double>();\n";
-			for (String listinit : c.getDefaultValue().split(",")) {
-				ret=ret+"		init_"+c.getNode().replace(".", "_")+".add("+listinit.trim()+"D);\n";
-			}
-			ret=ret+"		"+buildConfigVarName(c)+".addAll(cfg.getDoubleList(\""+c.getNode()+"\", init_"+c.getNode().replace(".", "_")+"));\n";
-			break;
-		case INT_LIST:		
-			ret=ret+ "		ArrayList<Integer> init_"+c.getNode().replace(".", "_")+" = new ArrayList<Integer>();\n";
-			for (String listinit : c.getDefaultValue().split(",")) {
-				ret=ret+"		init_"+c.getNode().replace(".", "_")+".add("+listinit.trim()+");\n";
-			}
-			ret=ret+"		"+buildConfigVarName(c)+".addAll(cfg.getIntList(\""+c.getNode()+"\", init_"+c.getNode().replace(".", "_")+"));\n";
-			break;
-		case STRING_LIST:	
-			ret=ret+ "		ArrayList<String> init_"+c.getNode().replace(".", "_")+" =new ArrayList<String>();\n";
-			for (String listinit : c.getDefaultValue().split(",")) {
-				ret=ret+"		init_"+c.getNode().replace(".", "_")+".add(\""+listinit.trim()+"\");\n";
-			}
-			ret=ret+"		"+buildConfigVarName(c)+".addAll(cfg.getStringList(\""+c.getNode()+"\", init_"+c.getNode().replace(".", "_")+"));\n";
-			break;
-		}
-		return ret;
-	}
 		
 	public String buildConfigGetter(){
-		String ret ="";
-		if (main.getData().isGen_configuration()) {
+		if(main.getData().getConfigNodes().size() == 0) return "";
+		
+		String ret ="	public Config interactConfig(){\n";
+		ret += 		"		return config;\n";
+		ret += 		"	}\n";
+		
+		/*if (main.getData().isGen_configuration()) {
 			for (ConfigurationNodeContainer c : main.getData().getConfigNodes()) {
 				switch (c.getType()) {
 				case BOOLEAN: 		
@@ -299,7 +212,7 @@ public class GenMainClass extends Generator {
 					break;
 				}
 			}	
-		}
+		}*/
 		return ret;
 	}
 	

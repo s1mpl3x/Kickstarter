@@ -6,6 +6,7 @@ import me.simplex.pluginkickstarter.storage.CommandContainer;
 import me.simplex.pluginkickstarter.storage.ConfigurationNodeContainer;
 import me.simplex.pluginkickstarter.storage.FileContainer;
 import me.simplex.pluginkickstarter.storage.ListenerContainer;
+import me.simplex.pluginkickstarter.storage.PermissionContainer;
 import me.simplex.pluginkickstarter.storage.TaskContainer;
 
 public class DataStorage {
@@ -30,6 +31,7 @@ public class DataStorage {
 	private ArrayList<ConfigurationNodeContainer> configNodes;
 	
 	private ArrayList<FileContainer> buildFiles;
+	private PermissionContainer permissionContainer;
 	
 	public DataStorage() {
 		this.tasks = new ArrayList<TaskContainer>();
@@ -37,6 +39,7 @@ public class DataStorage {
 		this.listener = new ArrayList<ListenerContainer>();
 		this.buildFiles = new ArrayList<FileContainer>();
 		this.configNodes = new ArrayList<ConfigurationNodeContainer>();
+		this.permissionContainer = new PermissionContainer();
 		
 		gen_listener = true;
 		gen_commands = true;
@@ -237,6 +240,10 @@ public class DataStorage {
 	 */
 	public String getPackage() {
 		return package_;
+	}
+
+	public PermissionContainer getPermissionsContainer() {
+		return permissionContainer;
 	}
 	
 	

@@ -90,6 +90,13 @@ public class PluginKickstarter {
 		}
 		getGUI().addToLog("generated listeners",true);
 		
+		//Config
+		
+		if(data.getConfigNodes().size() > 0){
+			data.getBuildFiles().add(builder.build_Config_File());
+			getGUI().addToLog("generated configuration", true);
+		}
+		
 		// tasks
 		if (data.getTasks().size() > 0) {
 			for (TaskContainer c : data.getTasks()) {

@@ -8,5 +8,7 @@ public enum ListenerType {
 	Weather,
 	Vehicle,
 	Inventory,
-	Server
+	Server,
+	Painting,
+	Enchantment
 }

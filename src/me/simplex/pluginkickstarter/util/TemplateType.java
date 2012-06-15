@@ -6,9 +6,20 @@ public enum TemplateType {
 	Listener,
 	Command,
 	Task,
-	Configuration;
+	Configuration,
+	PermissionsMain,
+	
+	//Different Permission Systems
+	prmBukkitPermissions,
+	prmGroupManager,
+	prmOpPermissions,
+	prmPermissionPlugin,
+	prmPEX,
+	prmVault;
 	
 	public String giveFilename(){
+		if(this.name().contains("prm"))
+			return "perm." + this.toString() + ".template";
 		return this.toString()+".template";
 	}
 }

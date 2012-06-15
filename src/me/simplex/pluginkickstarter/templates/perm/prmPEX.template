@@ -1,0 +1,84 @@
+$package
+
+import java.util.ArrayList;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import ru.tehkode.permissions.PermissionGroup;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+$importMain
+
+public class PEXPermissions implements PermissionPlugin {
+	
+	private $MainClass plugin;
+	private PermissionsEx pexPlugin;
+	private boolean isActive;
+	
+	public PEXPermissions(){
+		plugin = $MainClass.getPlugin();
+		isActive = false;
+		init();
+	}
+
+	@Override
+	public boolean isActive() {
+		return isActive;
+	}
+
+	@Override
+	public boolean getPermissions(CommandSender sender, String permissionNode) {
+		if(!(sender instanceof Player)) return true;
+		if(!isActive()) return false;
+		
+		Player player = (Player) sender;
+		
+		return pexPlugin.has(player, permissionNode);
+	}
+
+	@Override
+	public ArrayList<String> getGroups() {
+		ArrayList<String> groups = new ArrayList<String>();
+		if(!isActive()) return groups;
+		
+		PermissionGroup[] pexGroups = PermissionsEx.getPermissionManager().getGroups();
+		for(PermissionGroup pexGroup : pexGroups){
+			groups.add(pexGroup.getName());
+		}
+		
+		return groups;
+	}
+
+	@Override
+	public void init() {
+		isActive = initPEX();
+	}
+	
+	private boolean initPEX(){
+		try{
+			PermissionsEx pex = (PermissionsEx) plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
+			if(pex == null) return false;
+			pexPlugin = pex;
+		}catch(Exception e){
+			return false;
+		}
+		
+		return true;
+	}
+
+	@Override
+	public String getGroupOfPlayer(Player player) {
+		if(!isActive()) return "";
+		if (PermissionsEx.getPermissionManager().getUser(player).getGroupsNames().length > 0)
+            return PermissionsEx.getPermissionManager().getUser(player).getGroupsNames()[0];
+        else
+            return "";
+	}
+
+	@Override
+	public String getName() {
+		return "PermissionsEx";
+	}
+
+}

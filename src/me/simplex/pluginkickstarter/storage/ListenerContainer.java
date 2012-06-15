@@ -4,7 +4,6 @@ import me.simplex.pluginkickstarter.util.ListenerType;
 import me.simplex.pluginkickstarter.util.PriorityType;
 
 public class ListenerContainer {
-	private String type;
 	private String name;
 	private String event;
 	private String desc;
@@ -12,18 +11,13 @@ public class ListenerContainer {
 	private PriorityType priority;
 	private ListenerType file;
 
-	public ListenerContainer(ListenerType file, String type, String name, String event, String desc) {
+	public ListenerContainer(ListenerType file, String name, String event, String desc) {
 		this.file = file;
-		this.type = type;
 		this.name = name;
 		this.event = event;
 		this.desc = desc;
 		this.selected = false;
 		this.priority = PriorityType.Normal;
-	}
-
-	public String getType() {
-		return type;
 	}
 
 	public String getName() {
